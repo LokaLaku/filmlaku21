@@ -8,12 +8,27 @@
     <script src="assets/js/script.js" defer></script>
 </head>
 <body>
-<div class="container">
-    <h2>Pilih Server</h2>
-    <button onclick="loadServer('https://www.youtube.com/embed/dQw4w9WgXcQ')">Server 1</button>
-    <button onclick="loadServer('https://www.youtube.com/embed/tgbNymZ7vqY')">Server 2</button>
-    <button onclick="loadServer('https://www.youtube.com/embed/oHg5SJYRHA0')">Server 3</button>
-    <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-</div>
+<div class="container" id="player-container"></div>
+
+<script src="assets/js/films.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const film = films[id];
+
+if (film) {
+    document.getElementById("player-container").innerHTML = `
+        <h2>${film.title}</h2>
+        <div class="server-list">
+            <button onclick="loadServer('${film.video}')">Server 1</button>
+            <button onclick="loadServer('https://www.youtube.com/embed/tgbNymZ7vqY')">Server 2</button>
+            <button onclick="loadServer('https://www.youtube.com/embed/oHg5SJYRHA0')">Server 3</button>
+        </div>
+        <iframe id="videoPlayer" src="${film.video}" allowfullscreen></iframe>
+    `;
+} else {
+    document.getElementById("player-container").innerHTML = `<p>Film tidak ditemukan.</p>`;
+}
+</script>
 </body>
 </html>

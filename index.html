@@ -10,25 +10,33 @@
 <header>
     <h1>FilmLaku21</h1>
 </header>
-<div class="container">
-    <h2>Film Terbaru</h2>
-    <div class="film-grid">
-        <a href="detail.html">
-            <img src="assets/img/home-sweet-loan.jpg" alt="Film 1" />
-            <div class="film-title">Film 1</div>
-        </a>
-        <a href="detail.html">
-            <img src="assets/img/pulang.jpg" alt="Film 2" />
-            <div class="film-title">Film 2</div>
-        </a>
-        <a href="detail.html">
-            <img src="assets/img/freedom.jpg" alt="Film 3" />
-            <div class="film-title">Film 3</div>
-        </a>
-    </div>
-</div>
+
+<div class="container" id="film-list"></div>
+
 <footer>
     <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
 </footer>
+
+<script src="assets/js/films.js"></script>
+<script>
+function renderFilmSection(title, ids) {
+    return `
+        <h2>${title}</h2>
+        <div class="film-grid">
+            ${ids.map(id => `
+                <a href="detail.html?id=${id}">
+                    <img src="${films[id].img}" alt="${films[id].title}" />
+                    <div class="film-title">${films[id].title}</div>
+                </a>
+            `).join('')}
+        </div>
+    `;
+}
+
+document.getElementById("film-list").innerHTML =
+    renderFilmSection("Film Terbaru", ["film1", "film2", "film3"]) +
+    renderFilmSection("Film Laris", ["film3", "film1"]) +
+    renderFilmSection("Upload Terbaru", ["film2", "film3"]);
+</script>
 </body>
 </html>

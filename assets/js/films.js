@@ -1,4 +1,4 @@
-// films.js
+// assets/js/films.js
 const films = {
     film1: {
         title: "Home Sweet Loan",

@@ -5,65 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Detail Film - FilmLaku21</title>
     <link rel="stylesheet" href="assets/css/style.css" />
-    <script src="assets/js/script.js" defer></script>
 </head>
 <body>
 <header>
-    <h1>FilmLaku21</h1>
+    <h1><a href="index.html" style="text-decoration:none; color:inherit;">FilmLaku21</a></h1>
 </header>
-<div class="container">
-    <h2>Judul Film</h2>
 
-    <div class="server-list">
-      <button onclick="gantiServer(1)">Server 1</button>
-      <button onclick="gantiServer(2)">Server 2</button>
-      <button onclick="gantiServer(3)">Server 3</button>
-    </div>
+<div class="container" id="film-detail"></div>
 
-    <iframe id="player-frame" src="https://www.youtube.com/embed/tgbNymZ7vqY" allowfullscreen></iframe>
-
-    <h2>Rekomendasi Film Lain</h2>
-    <div class="film-grid">
-        <a href="#">
-            <img src="assets/img/pulang.jpg" alt="Film A" />
-            <div class="film-title">Film A</div>
-        </a>
-        <a href="#">
-            <img src="assets/img/freedom.jpg" alt="Film B" />
-            <div class="film-title">Film B</div>
-        </a>
-        <a href="#">
-            <img src="assets/img/home-sweet-loan.jpg" alt="Film C" />
-            <div class="film-title">Film C</div>
-        </a>
-    </div>
-
-    <h2>Upload Terbaru</h2>
-    <div class="film-grid">
-        <a href="#">
-            <img src="assets/img/home-sweet-loan.jpg" alt="Film D" />
-            <div class="film-title">Film D</div>
-        </a>
-        <a href="#">
-            <img src="assets/img/pulang.jpg" alt="Film E" />
-            <div class="film-title">Film E</div>
-        </a>
-    </div>
-
-    <h2>Film Laris</h2>
-    <div class="film-grid">
-        <a href="#">
-            <img src="assets/img/freedom.jpg" alt="Film F" />
-            <div class="film-title">Film F</div>
-        </a>
-        <a href="#">
-            <img src="assets/img/home-sweet-loan.jpg" alt="Film G" />
-            <div class="film-title">Film G</div>
-        </a>
-    </div>
-</div>
 <footer>
     <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
 </footer>
+
+<script src="assets/js/films.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+const film = films[id];
+
+if (film) {
+    document.getElementById("film-detail").innerHTML = `
+        <h2>${film.title}</h2>
+        <div class="server-list">
+            <button onclick="document.getElementById('player-frame').src='${film.video}'">Server 1</button>
+        </div>
+        <iframe id="player-frame" src="${film.video}" allowfullscreen></iframe>
+        <p><a href="player.html?id=${id}" style="display:inline-block;margin-top:10px;padding:8px 12px;background:#ff4444;color:white;text-decoration:none;border-radius:4px;">🎬 Tonton Film</a></p>
+
+        <h2>Rekomendasi Film Lain</h2>
+        <div class="film-grid">
+            ${film.rekomendasi.map(fid => `
+                <a href="detail.html?id=${fid}">
+                    <img src="${films[fid].img}" alt="${films[fid].title}" />
+                    <div class="film-title">${films[fid].title}</div>
+                </a>
+            `).join('')}
+        </div>
+    `;
+} else {
+    document.getElementById("film-detail").innerHTML = `<p>Film tidak ditemukan.</p>`;
+}
+</script>
 </body>
 </html>
