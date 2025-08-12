@@ -3,12 +3,23 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Film Terbaru - FilmLaku21</title>
+    <title>FilmLaku21</title>
     <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 <header>
-    <h1>FilmLaku21</h1>
+    <div class="navbar">
+        <h1>FilmLaku21</h1>
+        <div class="nav-links">
+            <a href="#">Beranda</a>
+            <a href="#">Film Terbaru</a>
+            <a href="#">Film Laris</a>
+            <a href="#">Upload Terbaru</a>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Cari film...">
+    </div>
 </header>
 
 <div class="container" id="film-list"></div>
@@ -24,9 +35,12 @@ function renderFilmSection(title, ids) {
         <h2>${title}</h2>
         <div class="film-grid">
             ${ids.map(id => `
-                <a href="detail.html?id=${id}">
+                <a href="detail.html?id=${id}" class="film-card">
+                    <div class="film-rating">⭐ ${films[id].rating}</div>
                     <img src="${films[id].img}" alt="${films[id].title}" />
-                    <div class="film-title">${films[id].title}</div>
+                    <div class="film-overlay">
+                        <div class="film-title">${films[id].title}</div>
+                    </div>
                 </a>
             `).join('')}
         </div>

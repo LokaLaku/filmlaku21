@@ -8,7 +8,18 @@
 </head>
 <body>
 <header>
-    <h1><a href="index.html" style="text-decoration:none; color:inherit;">FilmLaku21</a></h1>
+    <div class="navbar">
+        <h1><a href="index.html" style="color:inherit;">FilmLaku21</a></h1>
+        <div class="nav-links">
+            <a href="index.html">Beranda</a>
+            <a href="#">Film Terbaru</a>
+            <a href="#">Film Laris</a>
+            <a href="#">Upload Terbaru</a>
+        </div>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Cari film...">
+    </div>
 </header>
 
 <div class="container" id="film-detail"></div>
@@ -26,18 +37,18 @@ const film = films[id];
 if (film) {
     document.getElementById("film-detail").innerHTML = `
         <h2>${film.title}</h2>
-        <div class="server-list">
-            <button onclick="document.getElementById('player-frame').src='${film.video}'">Server 1</button>
-        </div>
         <iframe id="player-frame" src="${film.video}" allowfullscreen></iframe>
-        <p><a href="player.html?id=${id}" style="display:inline-block;margin-top:10px;padding:8px 12px;background:#ff4444;color:white;text-decoration:none;border-radius:4px;">🎬 Tonton Film</a></p>
+        <p><a href="player.html?id=${id}" class="btn-watch">🎬 Tonton Film</a></p>
 
         <h2>Rekomendasi Film Lain</h2>
         <div class="film-grid">
             ${film.rekomendasi.map(fid => `
-                <a href="detail.html?id=${fid}">
+                <a href="detail.html?id=${fid}" class="film-card">
+                    <div class="film-rating">⭐ ${films[fid].rating}</div>
                     <img src="${films[fid].img}" alt="${films[fid].title}" />
-                    <div class="film-title">${films[fid].title}</div>
+                    <div class="film-overlay">
+                        <div class="film-title">${films[fid].title}</div>
+                    </div>
                 </a>
             `).join('')}
         </div>
