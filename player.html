@@ -1,78 +1,81 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Player - FilmLaku21</title>
-    <link rel="stylesheet" href="assets/css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FilmLaku21 — Player</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 <header>
-    <div class="top-header">
-        <div class="logo"><a href="index.html" style="color:inherit;">FilmLaku21</a></div>
-        <div class="search-box">
-            <input type="text" placeholder="Cari Film...">
-        </div>
+  <div class="top-header">
+    <div class="logo"><a href="index.html" style="color:inherit;">FilmLaku21</a></div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Cari Film..." />
+      <div id="searchResults" class="search-results"></div>
     </div>
-    <nav class="nav-categories">
-        <a href="index.html">🏠 Beranda</a>
-        <a href="index.html?kategori=Drama">🎭 Drama</a>
-        <a href="index.html?kategori=Romance">💖 Romance</a>
-        <a href="index.html?kategori=Action">🔥 Action</a>
-    </nav>
+  </div>
+
+  <nav class="nav-categories">
+    <a href="index.html">🏠 Beranda</a>
+    <a href="index.html?kategori=Drama">🎭 Drama</a>
+    <a href="index.html?kategori=Romance">💖 Romance</a>
+    <a href="index.html?kategori=Action">🔥 Action</a>
+  </nav>
 </header>
 
-<div class="container" id="player-container"></div>
+<main>
+  <div class="container" id="player-container"></div>
+</main>
 
 <footer>
-    <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
+  <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
 </footer>
 
 <script src="assets/js/films.js"></script>
+<script src="assets/js/utils.js"></script>
 <script>
 function loadServer(url) {
-    document.getElementById("videoPlayer").src = url;
+  const player = document.getElementById("videoPlayer");
+  if (player) player.src = url;
 }
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const film = films[id];
+function loadPlayer() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const film = films[id];
 
-function renderFilmGrid(ids) {
-    return `
-        <div class="film-grid">
-            ${ids.map(fid => `
-                <a href="detail.html?id=${fid}" class="film-card">
-                    <div class="film-rating">⭐ ${films[fid].rating}</div>
-                    <img src="${films[fid].img}" alt="${films[fid].title}" />
-                    <div class="film-overlay">
-                        <div class="film-title">${films[fid].title}</div>
-                    </div>
-                </a>
-            `).join('')}
-        </div>
-    `;
-}
-
-if (film) {
-    document.getElementById("player-container").innerHTML = `
-        <h2>${film.title}</h2>
-        <div class="server-list">
-            <button onclick="loadServer('${film.video}')">Server 1</button>
-            <button onclick="loadServer('https://www.youtube.com/embed/tgbNymZ7vqY')">Server 2</button>
-            <button onclick="loadServer('https://www.youtube.com/embed/oHg5SJYRHA0')">Server 3</button>
-        </div>
-        <iframe id="videoPlayer" src="${film.video}" allowfullscreen></iframe>
-
-        <h2 style="margin-top:30px;">Rekomendasi Film</h2>
-        ${renderFilmGrid(film.rekomendasi)}
-
-        <h2 style="margin-top:30px;">Film Terbaru</h2>
-        ${renderFilmGrid(Object.keys(films).slice(0, 3))}
-    `;
-} else {
+  if (!id || !film) {
     document.getElementById("player-container").innerHTML = `<p>Film tidak ditemukan.</p>`;
+    return;
+  }
+
+  document.getElementById("player-container").innerHTML = `
+    <h2>${film.title}</h2>
+    <div class="server-list" style="margin-bottom:12px;">
+      <button onclick="loadServer('${film.video}')">Server 1</button>
+      <button onclick="loadServer('https://www.youtube.com/embed/tgbNymZ7vqY')">Server 2</button>
+      <button onclick="loadServer('https://www.youtube.com/embed/oHg5SJYRHA0')">Server 3</button>
+    </div>
+    <iframe id="videoPlayer" src="${film.video}" allowfullscreen></iframe>
+    ${renderFilmRecommendations(film.rekomendasi)}
+  `;
 }
+
+/* Init */
+loadPlayer();
+initLiveSearch();
+
+/* Local quick-search fallback inside player page */
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  const q = e.target.value.trim();
+  if (!q) {
+    loadPlayer();
+    return;
+  }
+  const ids = Object.keys(films).filter(k => films[k].title.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById("player-container").innerHTML = `<h2>Hasil Pencarian</h2>${renderFilmGrid(ids)}`;
+});
 </script>
 </body>
 </html>

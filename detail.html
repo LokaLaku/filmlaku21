@@ -1,61 +1,78 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Detail Film - FilmLaku21</title>
-    <link rel="stylesheet" href="assets/css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FilmLaku21 — Detail</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
 <header>
-    <div class="top-header">
-        <div class="logo"><a href="index.html" style="color:inherit;">FilmLaku21</a></div>
-        <div class="search-box">
-            <input type="text" placeholder="Cari Film...">
-        </div>
+  <div class="top-header">
+    <div class="logo"><a href="index.html" style="color:inherit;">FilmLaku21</a></div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Cari Film..." />
+      <div id="searchResults" class="search-results"></div>
     </div>
-    <nav class="nav-categories">
-        <a href="index.html">🏠 Beranda</a>
-        <a href="index.html?kategori=Drama">🎭 Drama</a>
-        <a href="index.html?kategori=Romance">💖 Romance</a>
-        <a href="index.html?kategori=Action">🔥 Action</a>
-    </nav>
+  </div>
+
+  <nav class="nav-categories">
+    <a href="index.html">🏠 Beranda</a>
+    <a href="index.html?kategori=Drama">🎭 Drama</a>
+    <a href="index.html?kategori=Romance">💖 Romance</a>
+    <a href="index.html?kategori=Action">🔥 Action</a>
+  </nav>
 </header>
 
-<div class="container" id="film-detail"></div>
+<main>
+  <div class="container" id="film-detail"></div>
+</main>
 
 <footer>
-    <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
+  <p>© 2025 FilmLaku21. Semua Hak Dilindungi.</p>
 </footer>
 
 <script src="assets/js/films.js"></script>
+<script src="assets/js/utils.js"></script>
 <script>
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
-const film = films[id];
+function loadFilmDetail() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const film = films[id];
 
-if (film) {
-    document.getElementById("film-detail").innerHTML = `
-        <h2>${film.title}</h2>
-        <iframe id="player-frame" src="${film.video}" allowfullscreen></iframe>
-        <p><a href="player.html?id=${id}" class="btn-watch">🎬 Tonton Film</a></p>
-
-        <h2>Rekomendasi Film Lain</h2>
-        <div class="film-grid">
-            ${film.rekomendasi.map(fid => `
-                <a href="detail.html?id=${fid}" class="film-card">
-                    <div class="film-rating">⭐ ${films[fid].rating}</div>
-                    <img src="${films[fid].img}" alt="${films[fid].title}" />
-                    <div class="film-overlay">
-                        <div class="film-title">${films[fid].title}</div>
-                    </div>
-                </a>
-            `).join('')}
-        </div>
-    `;
-} else {
+  function renderNotFound() {
     document.getElementById("film-detail").innerHTML = `<p>Film tidak ditemukan.</p>`;
+  }
+
+  if (!id || !film) {
+    renderNotFound();
+    return;
+  }
+
+  document.getElementById("film-detail").innerHTML = `
+    <h2>${film.title}</h2>
+    <iframe id="player-frame" src="${film.video}" allowfullscreen></iframe>
+    <p style="margin-top:12px;"><a href="player.html?id=${id}" class="btn-watch">🎬 Tonton Film</a></p>
+    ${renderFilmRecommendations(film.rekomendasi)}
+  `;
 }
+
+/* Keep search usable on this page (live popup from utils) */
+loadFilmDetail();
+initLiveSearch();
+
+/* Also support quick local search replacing detail (user experience choice) */
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input", (e) => {
+  const q = e.target.value.trim();
+  if (!q) {
+    loadFilmDetail();
+    return;
+  }
+  // show search results in the detail container as fallback (if user wants)
+  const ids = Object.keys(films).filter(k => films[k].title.toLowerCase().includes(q.toLowerCase()));
+  document.getElementById("film-detail").innerHTML = `<h2>Hasil Pencarian</h2>${renderFilmGrid(ids)}`;
+});
 </script>
 </body>
 </html>
