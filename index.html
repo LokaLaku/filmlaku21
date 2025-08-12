@@ -11,7 +11,7 @@
     <div class="top-header">
         <div class="logo">FilmLaku21</div>
         <div class="search-box">
-            <input type="text" placeholder="Cari Film...">
+            <input type="text" id="searchInput" placeholder="Cari Film...">
         </div>
     </div>
     <nav class="nav-categories">
@@ -29,36 +29,38 @@
 </footer>
 
 <script src="assets/js/films.js"></script>
+<script src="assets/js/utils.js"></script>
 <script>
 function renderFilmSection(title, ids) {
     return `
         <h2>${title}</h2>
-        <div class="film-grid">
-            ${ids.map(id => `
-                <a href="detail.html?id=${id}" class="film-card">
-                    <div class="film-rating">⭐ ${films[id].rating}</div>
-                    <img src="${films[id].img}" alt="${films[id].title}" />
-                    <div class="film-overlay">
-                        <div class="film-title">${films[id].title}</div>
-                    </div>
-                </a>
-            `).join('')}
-        </div>
+        ${renderFilmGrid(ids)}
     `;
 }
 
 const params = new URLSearchParams(window.location.search);
 const kategori = params.get("kategori");
 
-if (kategori) {
-    const filteredIds = Object.keys(films).filter(id => films[id].kategori === kategori);
-    document.getElementById("film-list").innerHTML = renderFilmSection(`Kategori: ${kategori}`, filteredIds);
-} else {
-    document.getElementById("film-list").innerHTML =
-        renderFilmSection("Film Terbaru", Object.keys(films)) +
-        renderFilmSection("Film Laris", ["film3", "film1"]) +
-        renderFilmSection("Upload Terbaru", ["film2", "film3"]);
+function showFilms(filter = "") {
+    let ids;
+    if (kategori) {
+        ids = Object.keys(films).filter(id => films[id].kategori.toLowerCase() === kategori.toLowerCase());
+    } else {
+        ids = Object.keys(films);
+    }
+    
+    if (filter) {
+        ids = ids.filter(id => films[id].title.toLowerCase().includes(filter.toLowerCase()));
+    }
+    
+    document.getElementById("film-list").innerHTML = renderFilmSection(kategori ? `Kategori: ${kategori}` : "Semua Film", ids);
 }
+
+showFilms();
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+    showFilms(e.target.value);
+});
 </script>
 </body>
 </html>
