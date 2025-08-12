@@ -1,22 +1,3 @@
-FilmLaku21/
-├── index.html # Halaman utama
-├── detail.html # Halaman detail film
-├── player.html # Halaman pemutar video
-├── assets/
-│ ├── css/
-│ │ └── style.css # Styling website
-│ ├── js/
-│ │ ├── films.js # Data film
-│ │ └── script.js # (Opsional) Script tambahan
-│ └── img/ # Gambar poster & screenshot
-└── README.md
-
-yaml
-Copy
-Edit
-
----
-
 ## 🚀 Cara Menjalankan
 1. Clone repository atau download ZIP:
    ```bash
