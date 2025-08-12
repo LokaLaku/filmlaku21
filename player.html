@@ -38,6 +38,22 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 const film = films[id];
 
+function renderFilmGrid(ids) {
+    return `
+        <div class="film-grid">
+            ${ids.map(fid => `
+                <a href="detail.html?id=${fid}" class="film-card">
+                    <div class="film-rating">⭐ ${films[fid].rating}</div>
+                    <img src="${films[fid].img}" alt="${films[fid].title}" />
+                    <div class="film-overlay">
+                        <div class="film-title">${films[fid].title}</div>
+                    </div>
+                </a>
+            `).join('')}
+        </div>
+    `;
+}
+
 if (film) {
     document.getElementById("player-container").innerHTML = `
         <h2>${film.title}</h2>
@@ -47,6 +63,12 @@ if (film) {
             <button onclick="loadServer('https://www.youtube.com/embed/oHg5SJYRHA0')">Server 3</button>
         </div>
         <iframe id="videoPlayer" src="${film.video}" allowfullscreen></iframe>
+
+        <h2 style="margin-top:30px;">Rekomendasi Film</h2>
+        ${renderFilmGrid(film.rekomendasi)}
+
+        <h2 style="margin-top:30px;">Film Terbaru</h2>
+        ${renderFilmGrid(Object.keys(films).slice(0, 3))}
     `;
 } else {
     document.getElementById("player-container").innerHTML = `<p>Film tidak ditemukan.</p>`;
