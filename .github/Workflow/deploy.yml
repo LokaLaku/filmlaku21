@@ -1,0 +1,50 @@
+name: Convert, Minify & Replace Images
+
+on:
+  push:
+    paths:
+      - "images/**.jpg"
+      - "images/**.jpeg"
+      - "images/**.png"
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install WebP CLI
+        run: sudo apt install webp -y
+
+      - name: Convert JPG/PNG to WebP
+        run: |
+          find images \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) -exec sh -c '
+            for img; do
+              cwebp -q 80 "$img" -o "${img%.*}.webp"
+            done
+          ' sh {} +
+
+      - name: Install imagemin-cli
+        run: |
+          npm install -g imagemin-cli imagemin-mozjpeg imagemin-pngquant imagemin-webp
+
+      - name: Minify images
+        run: |
+          npx imagemin '**/*.{jpg,jpeg,png,webp}' --out-dir=.
+
+      - name: Replace image references with WebP
+        run: |
+          find . -type f \( -iname "*.html" -o -iname "*.css" -o -iname "*.js" \) -exec sed -i \
+            -e 's/\.jpg/.webp/g' \
+            -e 's/\.jpeg/.webp/g' \
+            -e 's/\.png/.webp/g' {} +
+
+      - name: Commit optimized files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "Auto convert, minify & replace images with WebP [skip ci]" || echo "Nothing to commit"
+          git push
